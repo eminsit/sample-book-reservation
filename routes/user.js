@@ -10,7 +10,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    const users = await User.find().populate(`borrowedBooks`).populate(`bookHistory`);
+    const users = await User.find().select({"_id": 1, "name":1});
     res.send(users);
 });
 
