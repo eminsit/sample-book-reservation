@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
   
     user = new User(_.pick(req.body, ['name']));
 
-    console.log(user);
     await (await user.save()
                      .then(t => t.populate('borrowedBook', 'name').populate("bookHistory", 'name').execPopulate()));
 
@@ -42,7 +41,6 @@ router.post('/:userId/borrow/:bookId', async (req, res) => {
     if (!book) return res.status(404).send('Book does not exists!');
   
     user.set({"borrowedBook": book.get("_id")})
-    console.log(user);
     await (await user.save()
                      .then(t => t.populate('borrowedBook', {'name': 1, 'score': 1, "_id": 1}).populate("bookHistory", {'name': 1, 'score': 1}).execPopulate()));
     
@@ -57,8 +55,6 @@ router.post('/:userId/return/:bookId', async (req, res) => {
     if (!user) return res.status(404).send('User does not exists!');
 
     if(!user.get("borrowedBook")) return res.status(400).send('User does not has any book to return!');
-    console.log(bookId + "!=" + user.get("borrowedBook"));
-    console.log(bookId != user.get("borrowedBook"));
     if (bookId != user.get("borrowedBook")) return res.status(400).send('User does not has that book to return!');
     
     let book = await Book.findOne({ _id: bookId});
